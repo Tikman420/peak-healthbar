@@ -7,9 +7,14 @@ public interface ICondition
 {
     int Amount { get; }
 
+    string AcceptedTag { get; set; }
+
+    Sprite Icon { get; set; }
+    Color Color { get; set; }
+
     void Update();
     void Remove(int amount);
-    void Add(int amount);
+    void Add(int amount, string tag);
 }
 
 internal class Condition : ICondition
@@ -19,12 +24,20 @@ internal class Condition : ICondition
 
     public int deterioratingSpeed = 0;
 
-    public Sprite Icon;
-    public Color color;
+    public string acceptedTag;
+    public string AcceptedTag { get { return acceptedTag; } set { acceptedTag = value; } }
 
-    public void Add(int amount)
+    public Sprite icon;
+    public Sprite Icon { get { return icon; } set { icon = value; } }
+
+    public Color color;
+    public Color Color { get { return color; } set { color = value; } }
+
+    public void Add(int amount, string tag)
     {
-        Amount += amount;
+        if (AcceptedTag == tag) {
+            Amount += amount;
+        }
     }
 
     public void Remove(int amount)
