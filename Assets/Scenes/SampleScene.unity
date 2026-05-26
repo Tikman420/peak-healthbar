@@ -1581,13 +1581,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a21c2a884b082d48829c9a669c3cef1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  KnockedOutSlider: {fileID: 1142762134}
   controller: {fileID: 0}
+  KnockedOutSlider: {fileID: 1142762134}
   speed: 0.2
   gravity: -0.01962
   jumpHeight: 1
   mouseSensitivity: 10
   Camera: {fileID: 330585546}
+  velocity: {x: 0, y: 0, z: 0}
 --- !u!143 &2014119354
 CharacterController:
   m_ObjectHideFlags: 0

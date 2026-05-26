@@ -19,19 +19,15 @@ public interface ICondition
 
 internal class Condition : ICondition
 {
-    private int amount;
-    public int Amount { get { return amount; } protected set { amount = value; } }
+    public int Amount { get; protected set; }
 
     public int deterioratingSpeed = 0;
 
-    public string acceptedTag;
-    public string AcceptedTag { get { return acceptedTag; } set { acceptedTag = value; } }
+    public string AcceptedTag { get; set;}
 
-    public Sprite icon;
-    public Sprite Icon { get { return icon; } set { icon = value; } }
+    public Sprite Icon { get; set; }
 
-    public Color color;
-    public Color Color { get { return color; } set { color = value; } }
+    public Color Color { get; set; }
 
     public void Add(int amount, string tag)
     {

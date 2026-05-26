@@ -13,12 +13,12 @@ public class GameManager : MonoBehaviour
 
     public float mouseSensitivity = 100f;
     public Transform Camera;
-    StatusBar status = new StatusBar();
-    float Xrotation = 0f;
+    private StatusBar status = new StatusBar();
+    private float Xrotation = 0f;
 
     public Vector3 velocity;
-    float previousSpeed;
-    bool isgrounded = false;
+    private float previousSpeed;
+    private bool isgrounded = false;
 
     private void Start()
     {
@@ -31,8 +31,7 @@ public class GameManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
     }
 
-    // Update is called once per frame
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         if (status.dead)
         {
