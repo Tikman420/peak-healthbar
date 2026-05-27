@@ -19,7 +19,7 @@ internal class deathmanager
 
     public void resetDeath()
     {
-        Debug.Log("I am ALIVE!");
+        //Debug.Log("I am ALIVE!");
         KnockedOutSlider.gameObject.SetActive(false);
         KnockoutTimer = KnockedOutSlider.maxValue;
     }

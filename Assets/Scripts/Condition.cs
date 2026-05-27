@@ -14,10 +14,10 @@ public interface ICondition
 
     void Update();
     void Remove(int amount);
-    void Add(int amount, string tag);
+    bool Add(int amount, string tag);
 }
 
-internal class Condition : ICondition
+public class Condition : ICondition
 {
     public int Amount { get; protected set; }
 
@@ -29,11 +29,15 @@ internal class Condition : ICondition
 
     public Color Color { get; set; }
 
-    public void Add(int amount, string tag)
+    public bool Add(int amount, string tag)
     {
+        Debug.Log(tag);
         if (AcceptedTag == tag) {
+            Debug.Log("wrgd");
             Amount += amount;
+            return true;
         }
+        return false;
     }
 
     public void Remove(int amount)

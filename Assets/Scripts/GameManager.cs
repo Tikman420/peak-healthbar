@@ -10,6 +10,10 @@ public class GameManager : MonoBehaviour
     public float speed = 12f;
     public float gravity = -9.81f;
     public float jumpHeight = 3f;
+    public float sprintMultiplier = 2;
+
+    public Slider StaminaSlider;
+    public List<ScriptableCondition> statusTypes = new List<ScriptableCondition>();
 
     public float mouseSensitivity = 100f;
     public Transform Camera;
@@ -17,8 +21,10 @@ public class GameManager : MonoBehaviour
     private float Xrotation = 0f;
 
     public Vector3 velocity;
-    private float previousSpeed;
+    private Vector3 previousSpeed;
     private bool isgrounded = false;
+    private int collisionSize;
+
 
     private void Start()
     {
@@ -26,6 +32,8 @@ public class GameManager : MonoBehaviour
         KnockedOutSlider.value = status.deathmanager.KnockoutTimer;
 
         status.deathmanager.KnockedOutSlider = KnockedOutSlider;
+        status.StaminaSlider = StaminaSlider;
+        status.statusTypes = statusTypes;
 
         controller = gameObject.GetComponent<CharacterController>();
         Cursor.lockState = CursorLockMode.Locked;
@@ -42,11 +50,28 @@ public class GameManager : MonoBehaviour
         Controller();
         updateCamera();
 
-        if (velocity.y - previousSpeed >= 0.2)
+        if (velocity.y - previousSpeed.y >= 0.2)
         {
-            status.Add("Damage", Mathf.RoundToInt((previousSpeed - velocity.y)*-1));
+            status.AddAmount("Damage", Mathf.RoundToInt((previousSpeed.y - velocity.y)*-10));
         }
-        previousSpeed = velocity.y;
+        var collisions = Physics.OverlapBox(transform.position, new Vector3(0.5f, 2.0f, 0.5f));
+
+        if (collisions.Length > collisionSize)
+        {
+            foreach (var collision in collisions)
+            {
+                if (collisions[0].gameObject.tag == "")
+                {
+                    continue;
+                }
+
+                status.Add(collisions[0].gameObject.tag, previousSpeed);
+                break;
+            }
+        }
+        collisionSize = collisions.Length;
+
+        previousSpeed = velocity;
     }
 
     private void updateCamera()
@@ -74,7 +99,25 @@ public class GameManager : MonoBehaviour
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
-        Vector3 move = transform.right * x + transform.forward * z;
+        if (Input.GetButtonDown("Sprint"))
+        {
+            status.isSprinting = true;
+        }
+        if (Input.GetButtonUp("Sprint"))
+        {
+            status.isSprinting = false;
+        }
+
+        if (status.isSprinting && status.health != 0 && (x != 0 || z != 0))
+        {
+            x *= sprintMultiplier;
+            z *= sprintMultiplier;
+        }
+        else
+        {
+            status.isSprinting = false;
+        }
+            Vector3 move = transform.right * x + transform.forward * z;
 
         if (Input.GetButton("Jump") && isgrounded)
         {
@@ -82,8 +125,10 @@ public class GameManager : MonoBehaviour
             isgrounded = false;
         }
 
-        controller.Move(move * speed);
+        ///controller.Move(move * speed);
 
+        velocity.x = move.x * speed;
+        velocity.z = move.z * speed;
         velocity.y += gravity;
 
         controller.Move(velocity);
