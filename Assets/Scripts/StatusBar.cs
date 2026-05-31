@@ -17,6 +17,7 @@ internal class StatusBar
     public float tickSize;
 
     private Slider staminaslider;
+    private RectTransform staminaRect;
     public Slider StaminaSlider {
         get { return staminaslider; }
         set
@@ -24,8 +25,8 @@ internal class StatusBar
             staminaslider = value;
             staminaslider.maxValue = health;
             staminaslider.value = health;
-
-            tickSize = staminaslider.GetComponent<RectTransform>().sizeDelta.x/health;
+            staminaRect = StaminaSlider.GetComponent<RectTransform>();
+            tickSize = staminaRect.sizeDelta.x/health;
         } }
 
     public void update()
@@ -40,7 +41,7 @@ internal class StatusBar
             statusTotal += condition.Amount;
         }
 
-        if (staminaslider.maxValue == 0)
+        if (staminaslider.maxValue <= 0)
         {
             dead = deathmanager.updateDeath();
         }
@@ -71,10 +72,13 @@ internal class StatusBar
         {
             if (condition.Add(amount, type))
             {
+                staminaRect.sizeDelta -= new Vector2(amount * tickSize, 0);
+                StaminaSlider.maxValue -= amount;
                 return;
             }
         }
 
+        //generate the new status
         ScriptableCondition result = null;
 
         foreach (ScriptableCondition status in statusTypes)
@@ -92,13 +96,17 @@ internal class StatusBar
         }
 
         statusconditions.Add(ConditionFactory.AddCondition(result));
-        statusconditions[^1].Add(amount, type);
+        if(statusconditions[^1].Add(amount, type))
+        {
+            staminaRect.sizeDelta -= new Vector2(amount*tickSize, 0);
+            StaminaSlider.maxValue -= amount;
+        }
     }
 
     public void Add(string type, Vector3 velocity)
     {
         //AddAmount("Damage", Mathf.RoundToInt(velocity.y * -1));
         Debug.Log(velocity);
-        AddAmount(type, Mathf.RoundToInt(velocity.x*10));
+        AddAmount(type, Mathf.RoundToInt(velocity.x*1000));
     }
 }

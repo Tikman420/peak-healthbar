@@ -33,7 +33,6 @@ public class Condition : ICondition
     {
         Debug.Log(tag);
         if (AcceptedTag == tag) {
-            Debug.Log("wrgd");
             Amount += amount;
             return true;
         }
