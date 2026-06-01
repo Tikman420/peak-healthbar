@@ -12,6 +12,8 @@ public interface ICondition
     Sprite Icon { get; set; }
     Color Color { get; set; }
 
+    GameObject statusVisual {  get; set; }
+
     void Update();
     void Remove(int amount);
     bool Add(int amount, string tag);
@@ -28,6 +30,7 @@ public class Condition : ICondition
     public Sprite Icon { get; set; }
 
     public Color Color { get; set; }
+    public GameObject statusVisual { get; set; }
 
     public bool Add(int amount, string tag)
     {

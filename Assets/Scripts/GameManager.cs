@@ -5,34 +5,35 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public CharacterController controller;
-    public Slider KnockedOutSlider;
+    public Slider knockedOutSlider;
 
     public float speed = 12f;
     public float gravity = -9.81f;
     public float jumpHeight = 3f;
     public float sprintMultiplier = 2;
 
-    public Slider StaminaSlider;
+    public Slider staminaSlider;
     public List<ScriptableCondition> statusTypes = new List<ScriptableCondition>();
 
     public float mouseSensitivity = 100f;
     public Transform Camera;
     private StatusBar status = new StatusBar();
-    private float Xrotation = 0f;
+    private float xRotation = 0f;
 
     public Vector3 velocity;
     private Vector3 previousSpeed;
     private bool isgrounded = false;
     private int collisionSize;
 
+    public GameObject deathScreen;
 
     private void Start()
     {
-        KnockedOutSlider.maxValue = status.deathmanager.KnockoutTimer;
-        KnockedOutSlider.value = status.deathmanager.KnockoutTimer;
+        knockedOutSlider.maxValue = status.deathmanager.KnockoutTimer;
+        knockedOutSlider.value = status.deathmanager.KnockoutTimer;
 
-        status.deathmanager.KnockedOutSlider = KnockedOutSlider;
-        status.StaminaSlider = StaminaSlider;
+        status.deathmanager.KnockedOutSlider = knockedOutSlider;
+        status.StaminaSlider = staminaSlider;
         status.statusTypes = statusTypes;
 
         controller = gameObject.GetComponent<CharacterController>();
@@ -41,14 +42,21 @@ public class GameManager : MonoBehaviour
 
     private void FixedUpdate()
     {
+        updateCamera();
+
         if (status.dead)
         {
+            deathScreen.SetActive(true);
             return;
         }
 
         status.update();
+
+        if (staminaSlider.maxValue <= 0)
+        {
+            return;
+        }
         Controller();
-        updateCamera();
 
         if (velocity.y - previousSpeed.y >= 0.2)
         {
@@ -79,10 +87,10 @@ public class GameManager : MonoBehaviour
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
 
-        Xrotation -= mouseY;
-        Xrotation = Mathf.Clamp(Xrotation, -90f, 90f);
+        xRotation -= mouseY;
+        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
 
-        Camera.localRotation = Quaternion.Euler(Xrotation, 0f, 0f);
+        Camera.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
         transform.Rotate(Vector3.up * mouseX);
     }
 

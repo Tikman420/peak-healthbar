@@ -6,7 +6,7 @@ using UnityEngine.UI;
 internal class deathmanager
 {
     public Slider KnockedOutSlider;
-    public float KnockoutTimer = 60;
+    public float KnockoutTimer = 45;
 
     public bool updateDeath()
     {
@@ -14,13 +14,20 @@ internal class deathmanager
 
         KnockedOutSlider.gameObject.SetActive(true);
         KnockoutTimer -= Time.deltaTime;
+        KnockedOutSlider.value = KnockoutTimer;
+
+        if (KnockoutTimer <= 0)
+        {
+            return true;
+        }
+
         return false;
     }
 
     public void resetDeath()
     {
-        //Debug.Log("I am ALIVE!");
         KnockedOutSlider.gameObject.SetActive(false);
         KnockoutTimer = KnockedOutSlider.maxValue;
+        KnockedOutSlider.value = KnockoutTimer;
     }
 }
