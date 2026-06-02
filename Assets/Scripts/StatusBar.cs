@@ -14,34 +14,32 @@ internal class StatusBar
     public deathmanager deathmanager = new deathmanager();
 
     public int health = 1000;
-    public float tickSize;
+    public static float tickSize {get; private set;}
 
-    private Slider staminaslider;
+    private Slider staminaSlider;
     private RectTransform staminaRect;
     public Slider StaminaSlider {
-        get { return staminaslider; }
+        get { return staminaSlider; }
         set
         {
-            staminaslider = value;
-            staminaslider.maxValue = health;
-            staminaslider.value = health;
+            staminaSlider = value;
+            staminaSlider.maxValue = health;
+            staminaSlider.value = health;
             staminaRect = StaminaSlider.GetComponent<RectTransform>();
             tickSize = staminaRect.sizeDelta.x/health;
         } }
 
     public void update()
     {
-        //Debug.Log(statusconditions.Count);
-        int statusTotal = 0;
+        staminaRect.sizeDelta = new Vector2(staminaSlider.maxValue * tickSize, staminaRect.sizeDelta.y);
+        //int statusTotal = 0;
 
         foreach (ICondition condition in statusconditions)
         {
-            Debug.Log(condition.Amount);
             condition.Update();
-            statusTotal += condition.Amount;
         }
 
-        if (staminaslider.maxValue <= 0)
+        if (staminaSlider.maxValue <= 0)
         {
             dead = deathmanager.updateDeath();
         }
@@ -95,10 +93,9 @@ internal class StatusBar
             return;
         }
 
-        statusconditions.Add(ConditionFactory.AddCondition(result));
+        statusconditions.Add(ConditionFactory.AddCondition(result, staminaSlider.transform.parent));
         if(statusconditions[^1].Add(amount, type))
         {
-            staminaRect.sizeDelta -= new Vector2(amount*tickSize, 0);
             StaminaSlider.maxValue -= amount;
         }
     }

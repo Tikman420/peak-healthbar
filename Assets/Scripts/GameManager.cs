@@ -26,6 +26,7 @@ public class GameManager : MonoBehaviour
     private int collisionSize;
 
     public GameObject deathScreen;
+    [SerializeField] private GameObject templateCondition;
 
     private void Start()
     {
@@ -38,6 +39,8 @@ public class GameManager : MonoBehaviour
 
         controller = gameObject.GetComponent<CharacterController>();
         Cursor.lockState = CursorLockMode.Locked;
+
+        ConditionFactory.templateCondition = templateCondition;
     }
 
     private void FixedUpdate()

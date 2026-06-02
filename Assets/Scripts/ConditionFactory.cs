@@ -1,22 +1,26 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+using UnityEngine.UI;
 
 internal static class ConditionFactory
 {
-    public static ICondition AddCondition<T>(Sprite sprite, Color color, string acceptedTag) where T : ICondition, new()
-    {
-        ICondition condition = new T(); 
-        condition.Icon = sprite;
-        condition.Color = color;
-        condition.AcceptedTag = acceptedTag;
-        return condition;
-    }
+    internal static GameObject templateCondition;
 
-    public static ICondition AddCondition(ScriptableCondition condition)
+    public static ICondition AddCondition(ScriptableCondition condition, Transform parent)
     {
         ICondition newCondition = condition.conditionType;
-        newCondition.Icon = condition.icon;
-        newCondition.Color = condition.color;
         newCondition.AcceptedTag = condition.acceptedTag;
+        newCondition.deterioratingSpeed = condition.deterioratingSpeed;
+
+        //visuals
+        newCondition.StatusVisual = GameObject.Instantiate(templateCondition, parent);
+
+        Image icon = newCondition.StatusVisual.transform.GetChild(0).GetComponent<Image>();
+        icon.sprite = condition.icon;
+        icon.color = condition.color;
+
+        icon = newCondition.StatusVisual.transform.GetChild(1).GetComponent<Image>();
+        icon.color = condition.color;
         return newCondition;
     }
 }

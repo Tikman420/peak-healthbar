@@ -7,12 +7,10 @@ public interface ICondition
 {
     int Amount { get; }
 
+    int deterioratingSpeed { get; set; }
     string AcceptedTag { get; set; }
 
-    Sprite Icon { get; set; }
-    Color Color { get; set; }
-
-    GameObject statusVisual {  get; set; }
+    GameObject StatusVisual {  get; set; }
 
     void Update();
     void Remove(int amount);
@@ -23,20 +21,37 @@ public class Condition : ICondition
 {
     public int Amount { get; protected set; }
 
-    public int deterioratingSpeed = 0;
+    public int deterioratingSpeed { get; set; }
 
     public string AcceptedTag { get; set;}
 
-    public Sprite Icon { get; set; }
+    private RectTransform statusRect;
 
-    public Color Color { get; set; }
-    public GameObject statusVisual { get; set; }
+    private GameObject statusVisual;
+    public GameObject StatusVisual
+    {
+        get
+        {
+            return statusVisual;
+        } 
+
+        set
+        {
+            statusVisual = value;
+            statusRect = statusVisual.GetComponent<RectTransform>();
+        }
+    }
 
     public bool Add(int amount, string tag)
     {
         Debug.Log(tag);
         if (AcceptedTag == tag) {
             Amount += amount;
+            statusVisual.SetActive(true);
+
+            //update condition size
+            statusRect.sizeDelta = new Vector2(StatusBar.tickSize*Amount, statusRect.sizeDelta.y);
+
             return true;
         }
         return false;
@@ -44,12 +59,26 @@ public class Condition : ICondition
 
     public void Remove(int amount)
     {
-        Debug.Log("removed a total of " + amount + " from total: " + Amount);
+        Amount -= amount;
+
+        if (Amount <= 0)
+        {
+            Amount = 0;
+            statusVisual.SetActive(false);
+        }
+
+        //update condition size
+        statusRect.sizeDelta = new Vector2(StatusBar.tickSize * Amount, statusRect.sizeDelta.y);
+
+        //Debug.Log("removed a total of " + amount + " from total: " + Amount);
     }
 
     public void Update()
     {
-        Debug.Log("Deteriorating");
-        return;
+        if (deterioratingSpeed == 0)
+        {
+            return;
+        }
+        Remove(Mathf.RoundToInt(deterioratingSpeed));
     }
 }
