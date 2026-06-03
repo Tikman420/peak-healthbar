@@ -17,6 +17,7 @@ internal class StatusBar
     public static float tickSize {get; private set;}
 
     private Slider staminaSlider;
+    private HorizontalLayoutGroup bar;
     private RectTransform staminaRect;
     public Slider StaminaSlider {
         get { return staminaSlider; }
@@ -27,16 +28,21 @@ internal class StatusBar
             staminaSlider.value = health;
             staminaRect = StaminaSlider.GetComponent<RectTransform>();
             tickSize = staminaRect.sizeDelta.x/health;
+            bar = staminaSlider.transform.parent.GetComponent<HorizontalLayoutGroup>();
         } }
 
     public void update()
     {
-        staminaRect.sizeDelta = new Vector2(staminaSlider.maxValue * tickSize, staminaRect.sizeDelta.y);
         //int statusTotal = 0;
 
         foreach (ICondition condition in statusconditions)
         {
-            condition.Update();
+            int updatedTotal = condition.Update();
+            if (updatedTotal == 0)
+            {
+                continue;
+            }
+            staminaSlider.maxValue -= updatedTotal;
         }
 
         if (staminaSlider.maxValue <= 0)
@@ -57,6 +63,9 @@ internal class StatusBar
             health += sprintDepletion;
         }
         StaminaSlider.value = health;
+
+        staminaRect.sizeDelta = new Vector2(staminaSlider.maxValue * tickSize, staminaRect.sizeDelta.y);
+        bar.SetLayoutHorizontal();
     }
 
     public void AddAmount(string type, int amount)
@@ -93,7 +102,7 @@ internal class StatusBar
             return;
         }
 
-        statusconditions.Add(ConditionFactory.AddCondition(result, staminaSlider.transform.parent));
+        statusconditions.Add(ConditionFactory.AddCondition(result, bar.transform));
         if(statusconditions[^1].Add(amount, type))
         {
             StaminaSlider.maxValue -= amount;

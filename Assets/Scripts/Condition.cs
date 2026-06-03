@@ -12,8 +12,15 @@ public interface ICondition
 
     GameObject StatusVisual {  get; set; }
 
-    void Update();
+    //update this condition
+    //returns: total amount changed
+    int Update();
+
+    //remove a specific amount from this condition
     void Remove(int amount);
+
+    //add to the condition
+    //returns: if addition was succesful
     bool Add(int amount, string tag);
 }
 
@@ -73,12 +80,16 @@ public class Condition : ICondition
         //Debug.Log("removed a total of " + amount + " from total: " + Amount);
     }
 
-    public void Update()
+    public int Update()
     {
-        if (deterioratingSpeed == 0)
+        if (deterioratingSpeed == 0 || Amount <= 0)
         {
-            return;
+            return 0;
         }
-        Remove(Mathf.RoundToInt(deterioratingSpeed));
+
+        int deterioration = Mathf.RoundToInt(deterioratingSpeed);
+
+        Remove(deterioration);
+        return -deterioration;
     }
 }

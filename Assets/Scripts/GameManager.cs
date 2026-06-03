@@ -63,7 +63,7 @@ public class GameManager : MonoBehaviour
 
         if (velocity.y - previousSpeed.y >= 0.2)
         {
-            status.AddAmount("Damage", Mathf.RoundToInt((previousSpeed.y - velocity.y)*-10));
+            status.AddAmount("Damage", Mathf.RoundToInt(Mathf.Pow(previousSpeed.y, 2)*100));
         }
         var collisions = Physics.OverlapBox(transform.position, new Vector3(0.5f, 2.0f, 0.5f));
 
