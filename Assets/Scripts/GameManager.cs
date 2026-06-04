@@ -4,29 +4,22 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    public CharacterController controller;
+    //movement stuff
+    public Player player = new Player();
+
+    //knocked stuff
     public Slider knockedOutSlider;
+    public GameObject deathScreen;
 
-    public float speed = 12f;
-    public float gravity = -9.81f;
-    public float jumpHeight = 3f;
-    public float sprintMultiplier = 2;
-
+    //statusbar stuff
     public Slider staminaSlider;
     public List<ScriptableCondition> statusTypes = new List<ScriptableCondition>();
-
-    public float mouseSensitivity = 100f;
-    public Transform Camera;
+    [SerializeField] private GameObject templateCondition;
     private StatusBar status = new StatusBar();
-    private float xRotation = 0f;
 
-    public Vector3 velocity;
-    private Vector3 previousSpeed;
-    private bool isgrounded = false;
+    public Transform cameraObject;
     private int collisionSize;
 
-    public GameObject deathScreen;
-    [SerializeField] private GameObject templateCondition;
 
     private void Start()
     {
@@ -37,7 +30,11 @@ public class GameManager : MonoBehaviour
         status.StaminaSlider = staminaSlider;
         status.statusTypes = statusTypes;
 
-        controller = gameObject.GetComponent<CharacterController>();
+        player.controllerComponent = gameObject.GetComponent<CharacterController>();
+        player.cameraObject = cameraObject;
+        player.playerTransform = transform;
+        player.status = status;
+
         Cursor.lockState = CursorLockMode.Locked;
 
         ConditionFactory.templateCondition = templateCondition;
@@ -45,7 +42,7 @@ public class GameManager : MonoBehaviour
 
     private void FixedUpdate()
     {
-        updateCamera();
+        player.update(staminaSlider.maxValue <= 0);
 
         if (status.dead)
         {
@@ -55,15 +52,9 @@ public class GameManager : MonoBehaviour
 
         status.update();
 
-        if (staminaSlider.maxValue <= 0)
+        if (player.velocity.y - player.previousSpeed.y >= 0.2)
         {
-            return;
-        }
-        Controller();
-
-        if (velocity.y - previousSpeed.y >= 0.2)
-        {
-            status.AddAmount("Damage", Mathf.RoundToInt(Mathf.Pow(previousSpeed.y, 2)*100));
+            status.AddAmount("Damage", Mathf.RoundToInt(Mathf.Pow(player.previousSpeed.y, 2)*100));
         }
         var collisions = Physics.OverlapBox(transform.position, new Vector3(0.5f, 2.0f, 0.5f));
 
@@ -76,72 +67,12 @@ public class GameManager : MonoBehaviour
                     continue;
                 }
 
-                status.Add(collisions[0].gameObject.tag, previousSpeed);
+                status.Add(collisions[0].gameObject.tag, player.previousSpeed);
                 break;
             }
         }
         collisionSize = collisions.Length;
 
-        previousSpeed = velocity;
-    }
-
-    private void updateCamera()
-    {
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
-
-        xRotation -= mouseY;
-        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
-
-        Camera.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
-        transform.Rotate(Vector3.up * mouseX);
-    }
-
-    private void Controller()
-    {
-        isgrounded = controller.collisionFlags.HasFlag(CollisionFlags.Below);
-
-
-        if (isgrounded)
-        {
-            velocity.y = 0;
-        }
-
-        float x = Input.GetAxis("Horizontal");
-        float z = Input.GetAxis("Vertical");
-
-        if (Input.GetButtonDown("Sprint"))
-        {
-            status.isSprinting = true;
-        }
-        if (Input.GetButtonUp("Sprint"))
-        {
-            status.isSprinting = false;
-        }
-
-        if (status.isSprinting && status.health != 0 && (x != 0 || z != 0))
-        {
-            x *= sprintMultiplier;
-            z *= sprintMultiplier;
-        }
-        else
-        {
-            status.isSprinting = false;
-        }
-            Vector3 move = transform.right * x + transform.forward * z;
-
-        if (Input.GetButton("Jump") && isgrounded)
-        {
-            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-            isgrounded = false;
-        }
-
-        ///controller.Move(move * speed);
-
-        velocity.x = move.x * speed;
-        velocity.z = move.z * speed;
-        velocity.y += gravity;
-
-        controller.Move(velocity);
+        player.previousSpeed = player.velocity;
     }
 }

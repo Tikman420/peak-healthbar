@@ -2291,12 +2291,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a21c2a884b082d48829c9a669c3cef1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controller: {fileID: 2014119354}
   knockedOutSlider: {fileID: 1142762134}
-  speed: 0.2
-  gravity: -0.01962
-  jumpHeight: 1
-  sprintMultiplier: 2
+  deathScreen: {fileID: 1608732086}
   staminaSlider: {fileID: 746692330}
   statusTypes:
   - {fileID: 11400000, guid: b04faa69e13ef404ab9ddc6edd527e21, type: 2}
@@ -2304,11 +2300,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 39b99a945a47cdf468ac0904b58c7111, type: 2}
   - {fileID: 11400000, guid: 857e2b01fd6be554a9a5d5e082fdbbad, type: 2}
   - {fileID: 11400000, guid: 421351a83d4479f4ca3ba8664b01981a, type: 2}
-  mouseSensitivity: 10
-  Camera: {fileID: 330585546}
-  velocity: {x: 0, y: 0, z: 0}
-  deathScreen: {fileID: 1608732086}
   templateCondition: {fileID: 643720536223591091, guid: d00ae78c65f2c624495df5ab66ec8d0f, type: 3}
+  cameraObject: {fileID: 330585546}
 --- !u!143 &2014119354
 CharacterController:
   m_ObjectHideFlags: 0
