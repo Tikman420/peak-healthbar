@@ -128,8 +128,7 @@ internal class StatusBar
     }
 
     public void AddVelocity(string type, Vector3 velocity)
-    {
-        //AddAmount("Damage", Mathf.RoundToInt(velocity.y * -1));
+    {         
         AddAmount(type, Mathf.RoundToInt(Vector3.Distance(Vector3.zero, velocity)*20));
     }
 }

@@ -68,12 +68,14 @@ public class GameManager : MonoBehaviour
         {
             foreach (var collision in collisions)
             {
-                if (collisions[0].gameObject.tag == "")
+                if (collision.gameObject.tag == "Untagged")
                 {
                     continue;
                 }
 
-                status.AddVelocity(collisions[0].gameObject.tag, player.previousSpeed);
+                Debug.Log(collision.gameObject.tag);
+
+                status.AddVelocity(collision.gameObject.tag, player.previousSpeed);
                 break;
             }
         }

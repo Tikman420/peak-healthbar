@@ -4,9 +4,9 @@
 TagManager:
   serializedVersion: 3
   tags:
-  - hot
-  - cold
   - Poison
+  - Cold
+  - Heat
   layers:
   - Default
   - TransparentFX

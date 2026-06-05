@@ -10,8 +10,6 @@ internal class deathmanager
 
     public bool updateDeath()
     {
-        Debug.Log("I am dying");
-
         KnockedOutSlider.gameObject.SetActive(true);
         KnockoutTimer -= Time.deltaTime;
         KnockedOutSlider.value = KnockoutTimer;

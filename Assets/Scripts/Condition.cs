@@ -49,7 +49,6 @@ public class Condition : ICondition
 
     public bool Add(int amount, string tag)
     {
-        Debug.Log(tag);
         if (AcceptedTag == tag) {
             Amount += amount;
 
@@ -75,8 +74,6 @@ public class Condition : ICondition
 
         //update condition size
         statusRect.sizeDelta = new Vector2(StatusBar.tickSize * Amount, statusRect.sizeDelta.y);
-
-        //Debug.Log("removed a total of " + amount + " from total: " + Amount);
     }
 
     public int Update()
