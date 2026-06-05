@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour
     public Transform cameraObject;
     private int collisionSize;
 
-
+    //initialize stuff
     private void Start()
     {
         knockedOutSlider.maxValue = status.deathmanager.KnockoutTimer;
@@ -35,15 +35,19 @@ public class GameManager : MonoBehaviour
         player.playerTransform = transform;
         player.status = status;
 
-        Cursor.lockState = CursorLockMode.Locked;
-
         ConditionFactory.templateCondition = templateCondition;
+
+        Cursor.lockState = CursorLockMode.Locked;
+    }
+
+    private void Update()
+    {
+        player.update(staminaSlider.maxValue <= 0);
     }
 
     private void FixedUpdate()
     {
-        player.update(staminaSlider.maxValue <= 0);
-
+        //only continue if not in the dead state
         if (status.dead)
         {
             deathScreen.SetActive(true);
@@ -52,12 +56,14 @@ public class GameManager : MonoBehaviour
 
         status.update();
 
-        if (player.velocity.y - player.previousSpeed.y >= 0.2)
+        //check for fall damage
+        if (player.velocity.y - player.previousSpeed.y >= 8)
         {
-            status.AddAmount("Damage", Mathf.RoundToInt(Mathf.Pow(player.previousSpeed.y, 2)*100));
+            status.AddAmount("Damage", Mathf.RoundToInt(Mathf.Pow(player.previousSpeed.y, 2)/2));
         }
-        var collisions = Physics.OverlapBox(transform.position, new Vector3(0.5f, 2.0f, 0.5f));
 
+        //check for the other statuses
+        var collisions = Physics.OverlapBox(transform.position, new Vector3(0.6f, 2.0f, 0.6f));
         if (collisions.Length > collisionSize)
         {
             foreach (var collision in collisions)
@@ -67,7 +73,7 @@ public class GameManager : MonoBehaviour
                     continue;
                 }
 
-                status.Add(collisions[0].gameObject.tag, player.previousSpeed);
+                status.AddVelocity(collisions[0].gameObject.tag, player.previousSpeed);
                 break;
             }
         }

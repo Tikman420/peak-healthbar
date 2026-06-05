@@ -27,25 +27,23 @@ public interface ICondition
 public class Condition : ICondition
 {
     public int Amount { get; protected set; }
-
     public int deterioratingSpeed { get; set; }
 
     public string AcceptedTag { get; set;}
 
     private RectTransform statusRect;
-
-    private GameObject statusVisual;
+    private GameObject statusvisual;
     public GameObject StatusVisual
     {
         get
         {
-            return statusVisual;
+            return statusvisual;
         } 
 
         set
         {
-            statusVisual = value;
-            statusRect = statusVisual.GetComponent<RectTransform>();
+            statusvisual = value;
+            statusRect = statusvisual.GetComponent<RectTransform>();
         }
     }
 
@@ -54,7 +52,8 @@ public class Condition : ICondition
         Debug.Log(tag);
         if (AcceptedTag == tag) {
             Amount += amount;
-            statusVisual.SetActive(true);
+
+            StatusVisual.SetActive(true);
 
             //update condition size
             statusRect.sizeDelta = new Vector2(StatusBar.tickSize*Amount, statusRect.sizeDelta.y);
@@ -71,7 +70,7 @@ public class Condition : ICondition
         if (Amount <= 0)
         {
             Amount = 0;
-            statusVisual.SetActive(false);
+            StatusVisual.SetActive(false);
         }
 
         //update condition size

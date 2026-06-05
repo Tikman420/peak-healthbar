@@ -3,22 +3,29 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
 
+//manger for the statusbar
 internal class StatusBar
 {
+    //settings
+    public int health = 1000;
+    private const int sprintDepletion = 2;
+    private const float hungerTimerLength = 10;
+    private const int hungerAmount = 20;
+
     public List<ICondition> statusconditions = new List<ICondition>();
     public List<ScriptableCondition> statusTypes;
     public bool dead;
     public bool isSprinting;
-    public int sprintDepletion = 2;
 
     public deathmanager deathmanager = new deathmanager();
 
-    public int health = 1000;
     public static float tickSize {get; private set;}
 
     private Slider staminaSlider;
     private HorizontalLayoutGroup bar;
     private RectTransform staminaRect;
+    public float hungerTimer;
+
     public Slider StaminaSlider {
         get { return staminaSlider; }
         set
@@ -33,8 +40,16 @@ internal class StatusBar
 
     public void update()
     {
-        //int statusTotal = 0;
+        //add hunger
+        hungerTimer += Time.deltaTime;
+        if (hungerTimer > hungerTimerLength) 
+        {
+            AddAmount("Hunger", hungerAmount);
+            hungerTimer = 0;
+        }
 
+
+        //update the conditions
         foreach (ICondition condition in statusconditions)
         {
             int updatedTotal = condition.Update();
@@ -45,6 +60,7 @@ internal class StatusBar
             staminaSlider.maxValue -= updatedTotal;
         }
 
+        //check for death
         if (staminaSlider.maxValue <= 0)
         {
             dead = deathmanager.updateDeath();
@@ -54,6 +70,7 @@ internal class StatusBar
             deathmanager.resetDeath();
         }
 
+        //update sprintbar
         if (isSprinting)
         {
             health -= sprintDepletion;
@@ -64,6 +81,7 @@ internal class StatusBar
         }
         StaminaSlider.value = health;
 
+        //update bar
         staminaRect.sizeDelta = new Vector2(staminaSlider.maxValue * tickSize, staminaRect.sizeDelta.y);
         bar.SetLayoutHorizontal();
     }
@@ -85,7 +103,7 @@ internal class StatusBar
             }
         }
 
-        //generate the new status
+        //generate a new status
         ScriptableCondition result = null;
 
         foreach (ScriptableCondition status in statusTypes)
@@ -109,10 +127,9 @@ internal class StatusBar
         }
     }
 
-    public void Add(string type, Vector3 velocity)
+    public void AddVelocity(string type, Vector3 velocity)
     {
         //AddAmount("Damage", Mathf.RoundToInt(velocity.y * -1));
-        Debug.Log(velocity);
-        AddAmount(type, Mathf.RoundToInt(velocity.x*1000));
+        AddAmount(type, Mathf.RoundToInt(Vector3.Distance(Vector3.zero, velocity)*20));
     }
 }

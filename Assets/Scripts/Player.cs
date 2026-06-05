@@ -3,28 +3,30 @@
 public class Player
 {
     //controller settings
-    public const float speed = 0.2f;
-    public const float gravity = -0.01962f;
-    public const float jumpHeight = 1f;
+    public const float speed = 6f;
+    public const float gravity = -0.1962f;
+    public const float jumpHeight = 30f;
     public const float sprintMultiplier = 1.5f;
 
-    public const float mouseSensitivity = 10f;
+    public const float mouseSensitivity = 200f;
 
-    //other stuff
-    public CharacterController controllerComponent;
+    //other stuff, no need to touch
     internal StatusBar status;
+    public CharacterController controllerComponent;
     public Transform cameraObject;
     public Transform playerTransform;
 
-    private bool isgrounded;
+    private bool isGrounded;
     private float xRotation = 0f;
     public Vector3 velocity;
     public Vector3 previousSpeed;
 
+    //update the controller
     public void update(bool isKnocked)
     {
         updateCamera();
 
+        //only move if in the alive state
         if (isKnocked)
         {
             return;
@@ -32,24 +34,26 @@ public class Player
         controller();
     }
     
+    //update camera rotation
     private void updateCamera()
     {
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
 
-        xRotation -= mouseY;
+        xRotation -= mouseY * Time.deltaTime;
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
 
         cameraObject.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
-        playerTransform.Rotate(Vector3.up * mouseX);
+        playerTransform.Rotate(Vector3.up * mouseX * Time.deltaTime);
     }
 
+
+    //update movement
     private void controller()
     {
-        isgrounded = controllerComponent.collisionFlags.HasFlag(CollisionFlags.Below);
+        isGrounded = controllerComponent.collisionFlags.HasFlag(CollisionFlags.Below);
 
-
-        if (isgrounded)
+        if (isGrounded)
         {
             velocity.y = 0;
         }
@@ -77,18 +81,16 @@ public class Player
         }
         Vector3 move = playerTransform.right * x + playerTransform.forward * z;
 
-        if (Input.GetButton("Jump") && isgrounded)
+        if (Input.GetButton("Jump") && isGrounded)
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-            isgrounded = false;
+            isGrounded = false;
         }
-
-        ///controller.Move(move * speed);
 
         velocity.x = move.x * speed;
         velocity.z = move.z * speed;
         velocity.y += gravity;
 
-        controllerComponent.Move(velocity);
+        controllerComponent.Move(velocity * Time.deltaTime);
     }
 }
