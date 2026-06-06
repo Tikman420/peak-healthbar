@@ -12,34 +12,34 @@ internal class StatusBar
     private const int hungerAmount = 20;
     
     //other stuff no need to touch
-    public List<ICondition> statusconditions = new List<ICondition>();
+    public List<ICondition> statusConditions = new List<ICondition>();
     public List<ScriptableCondition> statusTypes;
     public bool dead;
     public bool isSprinting;
 
-    public deathmanager deathmanager = new deathmanager();
+    public DeathManager deathmanager = new DeathManager();
 
     public static float tickSize {get; private set;}
 
-    private Slider staminaSlider;
+    private Slider privateStaminaSlider;
     private HorizontalLayoutGroup bar;
     private RectTransform staminaRect;
     public float hungerTimer;
 
-    public Slider StaminaSlider {
-        get { return staminaSlider; }
+    public Slider staminaSlider {
+        get { return privateStaminaSlider; }
         set
         {
-            staminaSlider = value;
+            privateStaminaSlider = value;
             staminaSlider.maxValue = health;
             staminaSlider.value = health;
-            staminaRect = StaminaSlider.GetComponent<RectTransform>();
+            staminaRect = staminaSlider.GetComponent<RectTransform>();
             tickSize = staminaRect.sizeDelta.x/health;
             bar = staminaSlider.transform.parent.GetComponent<HorizontalLayoutGroup>();
         } }
 
     //update statusbar
-    public void update()
+    public void Update()
     {
         //add hunger
         hungerTimer += Time.deltaTime;
@@ -51,9 +51,9 @@ internal class StatusBar
 
 
         //update the conditions
-        foreach (ICondition condition in statusconditions)
+        foreach (ICondition condition in statusConditions)
         {
-            int updatedTotal = condition.update();
+            int updatedTotal = condition.Update();
             if (updatedTotal == 0)
             {
                 continue;
@@ -64,11 +64,11 @@ internal class StatusBar
         //check for death
         if (staminaSlider.maxValue <= 0)
         {
-            dead = deathmanager.updateDeath();
+            dead = deathmanager.UpdateDeath();
         }
         else
         {
-            deathmanager.resetDeath();
+            deathmanager.ResetDeath();
         }
 
         //update sprintbar
@@ -76,11 +76,11 @@ internal class StatusBar
         {
             health -= sprintDepletion;
         }
-        else if (health < StaminaSlider.maxValue)
+        else if (health < staminaSlider.maxValue)
         {
             health += sprintDepletion;
         }
-        StaminaSlider.value = health;
+        staminaSlider.value = health;
 
         //update bar
         staminaRect.sizeDelta = new Vector2(staminaSlider.maxValue * tickSize, staminaRect.sizeDelta.y);
@@ -96,12 +96,12 @@ internal class StatusBar
             return;
         }
 
-        foreach (ICondition condition in statusconditions)
+        foreach (ICondition condition in statusConditions)
         {
-            int addTotal = condition.add(amount, type);
+            int addTotal = condition.Add(amount, type);
             if (addTotal != -1)
             {
-                StaminaSlider.maxValue -= addTotal;
+                staminaSlider.maxValue -= addTotal;
                 return;
             }
         }
@@ -123,11 +123,11 @@ internal class StatusBar
             return;
         }
 
-        statusconditions.Add(ConditionFactory.AddCondition(result, bar.transform, statusconditions));
-        int remove = statusconditions[^1].add(amount, type);
+        statusConditions.Add(ConditionFactory.AddCondition(result, bar.transform, statusConditions));
+        int remove = statusConditions[^1].Add(amount, type);
         if (remove != -1)
         {
-            StaminaSlider.maxValue -= remove;
+            staminaSlider.maxValue -= remove;
         }
     }
 

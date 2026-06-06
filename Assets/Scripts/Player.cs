@@ -5,7 +5,7 @@ public class Player
     //controller settings
     public const float speed = 6f;
     public const float gravity = -0.1962f;
-    public const float jumpHeight = 30f;
+    public const float jumpHeight = 100f;
     public const float sprintMultiplier = 1.5f;
 
     public const float mouseSensitivity = 200f;
@@ -22,20 +22,20 @@ public class Player
     public Vector3 previousSpeed;
 
     //update the controller
-    public void update(bool isKnocked)
+    public void Update(bool isKnocked)
     {
-        updateCamera();
+        UpdateCamera();
 
         //only move if in the alive state
         if (isKnocked)
         {
             return;
         }
-        controller();
+        Controller();
     }
     
     //update camera rotation
-    private void updateCamera()
+    private void UpdateCamera()
     {
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
@@ -49,7 +49,7 @@ public class Player
 
 
     //update movement
-    private void controller()
+    private void Controller()
     {
         isGrounded = controllerComponent.collisionFlags.HasFlag(CollisionFlags.Below);
 

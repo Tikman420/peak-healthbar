@@ -9,7 +9,7 @@ public interface ICondition
     int deterioratingSpeed { get; set; }
 
     //the tag that identifies this condition
-    string AcceptedTag { get; set; }
+    string acceptedTag { get; set; }
 
     //the visual for the condition
     GameObject statusVisual {  get; set; }
@@ -19,15 +19,15 @@ public interface ICondition
 
     //update this condition
     //returns: total amount changed
-    int update();
+    int Update();
 
     //remove a specific amount from this condition
     //returns: how much has been succesfully removed
-    int remove(int amount);
+    int Remove(int amount);
 
     //add to the condition
     //returns: if addition was succesful
-    int add(int amount, string tag);
+    int Add(int amount, string tag);
 }
 
 //base implementation of ICondition
@@ -36,7 +36,7 @@ public class Condition : ICondition
     public int total { get; protected set; }
     public int deterioratingSpeed { get; set; }
 
-    public string AcceptedTag { get; set;}
+    public string acceptedTag { get; set;}
 
     public ICondition influence { get; set; }
 
@@ -58,13 +58,13 @@ public class Condition : ICondition
 
     //add to the condition
     //returns: if addition was succesful
-    public virtual int add(int amount, string tag)
+    public virtual int Add(int amount, string tag)
     {
-        if (AcceptedTag == tag) 
+        if (acceptedTag == tag) 
         {
             if (influence != null) 
             {
-                int influenced = influence.remove(amount);
+                int influenced = influence.Remove(amount);
                 total += (amount - influenced);
                 amount = (amount - influenced) - influenced;
             }
@@ -88,7 +88,7 @@ public class Condition : ICondition
 
     //remove a specific amount from this condition
     //returns: how much has been succesfully removed
-    public virtual int remove(int amount)
+    public virtual int Remove(int amount)
     {
         total -= amount;
 
@@ -107,7 +107,7 @@ public class Condition : ICondition
 
     //update this condition
     //returns: total amount changed
-    public virtual int update()
+    public virtual int Update()
     {
         if (deterioratingSpeed == 0 || total <= 0)
         {
@@ -116,7 +116,7 @@ public class Condition : ICondition
 
         int deterioration = Mathf.RoundToInt(deterioratingSpeed);
 
-        remove(deterioration);
+        Remove(deterioration);
         return -deterioration;
     }
 }

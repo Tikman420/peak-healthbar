@@ -16,4 +16,4 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: e03b555c95be06d44b98ce7721bf5e64, type: 3}
   color: {r: 1, g: 0.1805506, b: 0, a: 1}
   deterioratingSpeed: 1
-  InfluencerTag: Cold
+  influencerTag: Cold

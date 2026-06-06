@@ -16,4 +16,4 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 3b997bdd483826443a8f5d3d20e56b22, type: 3}
   color: {r: 0, g: 0.5964584, b: 0.6981132, a: 1}
   deterioratingSpeed: 1
-  InfluencerTag: Heat
+  influencerTag: Heat

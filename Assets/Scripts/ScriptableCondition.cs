@@ -8,6 +8,6 @@ public class ScriptableCondition : ScriptableObject
     public Sprite icon;
     public Color color;
     public int deterioratingSpeed = 0;
-    public string InfluencerTag;
+    public string influencerTag;
     public Condition conditionType = new Condition();
 }

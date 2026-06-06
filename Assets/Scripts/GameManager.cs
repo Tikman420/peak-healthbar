@@ -23,11 +23,11 @@ public class GameManager : MonoBehaviour
     //initialize stuff
     private void Start()
     {
-        knockedOutSlider.maxValue = status.deathmanager.KnockoutTimer;
-        knockedOutSlider.value = status.deathmanager.KnockoutTimer;
+        knockedOutSlider.maxValue = status.deathmanager.knockoutTimer;
+        knockedOutSlider.value = status.deathmanager.knockoutTimer;
 
-        status.deathmanager.KnockedOutSlider = knockedOutSlider;
-        status.StaminaSlider = staminaSlider;
+        status.deathmanager.knockedOutSlider = knockedOutSlider;
+        status.staminaSlider = staminaSlider;
         status.statusTypes = statusTypes;
 
         player.controllerComponent = gameObject.GetComponent<CharacterController>();
@@ -43,7 +43,7 @@ public class GameManager : MonoBehaviour
     //update input
     private void Update()
     {
-        player.update(staminaSlider.maxValue <= 0);
+        player.Update(staminaSlider.maxValue <= 0);
     }
 
     //uodate conditions and state
@@ -57,7 +57,7 @@ public class GameManager : MonoBehaviour
         }
 
         //update state
-        status.update();
+        status.Update();
 
         //check for fall damage
         if (player.velocity.y - player.previousSpeed.y >= 8)

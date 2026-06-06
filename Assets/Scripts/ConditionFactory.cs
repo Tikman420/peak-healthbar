@@ -10,7 +10,7 @@ internal static class ConditionFactory
     public static ICondition AddCondition(ScriptableCondition condition, Transform parent, List<ICondition> conditions)
     {
         ICondition newCondition = condition.conditionType;
-        newCondition.AcceptedTag = condition.acceptedTag;
+        newCondition.acceptedTag = condition.acceptedTag;
         newCondition.deterioratingSpeed = condition.deterioratingSpeed;
 
         //visuals
@@ -26,7 +26,7 @@ internal static class ConditionFactory
         //influencers
         foreach (ICondition otherCondition in conditions)
         {
-            if (condition.InfluencerTag == otherCondition.AcceptedTag)
+            if (condition.influencerTag == otherCondition.acceptedTag)
             {
                 otherCondition.influence = newCondition;
                 newCondition.influence = otherCondition;
