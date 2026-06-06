@@ -11,17 +11,18 @@ public interface ICondition
     string AcceptedTag { get; set; }
 
     GameObject StatusVisual {  get; set; }
+    ICondition influence {  get; set; }
 
     //update this condition
     //returns: total amount changed
     int Update();
 
     //remove a specific amount from this condition
-    void Remove(int amount);
+    int remove(int amount);
 
     //add to the condition
     //returns: if addition was succesful
-    bool Add(int amount, string tag);
+    int Add(int amount, string tag);
 }
 
 public class Condition : ICondition
@@ -30,6 +31,8 @@ public class Condition : ICondition
     public int deterioratingSpeed { get; set; }
 
     public string AcceptedTag { get; set;}
+
+    public ICondition influence { get; set; }
 
     private RectTransform statusRect;
     private GameObject statusvisual;
@@ -47,33 +50,52 @@ public class Condition : ICondition
         }
     }
 
-    public bool Add(int amount, string tag)
+    public int Add(int amount, string tag)
     {
-        if (AcceptedTag == tag) {
-            Amount += amount;
+        if (AcceptedTag == tag) 
+        {
+            if (influence != null) 
+            {
+                int influenced = influence.remove(amount);
+                Debug.Log(influenced);
+                Debug.Log(amount);
+                Amount += (amount - influenced);
+                amount = (amount - influenced) - influenced;
+            }
+            else
+            {
+                Amount += amount;
+            }
 
-            StatusVisual.SetActive(true);
+            if (Amount != 0)
+            {
+                StatusVisual.SetActive(true);
+            }
 
             //update condition size
             statusRect.sizeDelta = new Vector2(StatusBar.tickSize*Amount, statusRect.sizeDelta.y);
 
-            return true;
+            return amount;
         }
-        return false;
+        return -1;
     }
 
-    public void Remove(int amount)
+    //returns the amount succesfully removed
+    public int remove(int amount)
     {
         Amount -= amount;
 
         if (Amount <= 0)
         {
+            int rest = -Amount;
             Amount = 0;
             StatusVisual.SetActive(false);
+            return amount - rest;
         }
 
         //update condition size
         statusRect.sizeDelta = new Vector2(StatusBar.tickSize * Amount, statusRect.sizeDelta.y);
+        return amount;
     }
 
     public int Update()
@@ -85,7 +107,7 @@ public class Condition : ICondition
 
         int deterioration = Mathf.RoundToInt(deterioratingSpeed);
 
-        Remove(deterioration);
+        remove(deterioration);
         return -deterioration;
     }
 }

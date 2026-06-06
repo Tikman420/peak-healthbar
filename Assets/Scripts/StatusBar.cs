@@ -95,10 +95,11 @@ internal class StatusBar
 
         foreach (ICondition condition in statusconditions)
         {
-            if (condition.Add(amount, type))
+            int addTotal = condition.Add(amount, type);
+            if (addTotal != -1)
             {
-                staminaRect.sizeDelta -= new Vector2(amount * tickSize, 0);
-                StaminaSlider.maxValue -= amount;
+                Debug.Log(addTotal);
+                StaminaSlider.maxValue -= addTotal;
                 return;
             }
         }
@@ -120,10 +121,12 @@ internal class StatusBar
             return;
         }
 
-        statusconditions.Add(ConditionFactory.AddCondition(result, bar.transform));
-        if(statusconditions[^1].Add(amount, type))
+        statusconditions.Add(ConditionFactory.AddCondition(result, bar.transform, statusconditions));
+        int remove = statusconditions[^1].Add(amount, type);
+        if (remove != -1)
         {
-            StaminaSlider.maxValue -= amount;
+            Debug.Log(remove);
+            StaminaSlider.maxValue -= remove;
         }
     }
 
