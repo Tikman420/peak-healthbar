@@ -1,33 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
-
+﻿using UnityEngine;
 
 public interface ICondition
 {
-    int Amount { get; }
+    //the amount currently in the condition
+    int total { get; }
 
+    //how fast the condition deteriorates. leave at 0 to stay permanent
     int deterioratingSpeed { get; set; }
+
+    //the tag that identifies this condition
     string AcceptedTag { get; set; }
 
-    GameObject StatusVisual {  get; set; }
+    //the visual for the condition
+    GameObject statusVisual {  get; set; }
+
+    //the condition that this condition influences
     ICondition influence {  get; set; }
 
     //update this condition
     //returns: total amount changed
-    int Update();
+    int update();
 
     //remove a specific amount from this condition
+    //returns: how much has been succesfully removed
     int remove(int amount);
 
     //add to the condition
     //returns: if addition was succesful
-    int Add(int amount, string tag);
+    int add(int amount, string tag);
 }
 
+//base implementation of ICondition
 public class Condition : ICondition
 {
-    public int Amount { get; protected set; }
+    public int total { get; protected set; }
     public int deterioratingSpeed { get; set; }
 
     public string AcceptedTag { get; set;}
@@ -36,7 +42,7 @@ public class Condition : ICondition
 
     private RectTransform statusRect;
     private GameObject statusvisual;
-    public GameObject StatusVisual
+    public GameObject statusVisual
     {
         get
         {
@@ -50,57 +56,60 @@ public class Condition : ICondition
         }
     }
 
-    public int Add(int amount, string tag)
+    //add to the condition
+    //returns: if addition was succesful
+    public virtual int add(int amount, string tag)
     {
         if (AcceptedTag == tag) 
         {
             if (influence != null) 
             {
                 int influenced = influence.remove(amount);
-                Debug.Log(influenced);
-                Debug.Log(amount);
-                Amount += (amount - influenced);
+                total += (amount - influenced);
                 amount = (amount - influenced) - influenced;
             }
             else
             {
-                Amount += amount;
+                total += amount;
             }
 
-            if (Amount != 0)
+            if (total != 0)
             {
-                StatusVisual.SetActive(true);
+                statusVisual.SetActive(true);
             }
 
             //update condition size
-            statusRect.sizeDelta = new Vector2(StatusBar.tickSize*Amount, statusRect.sizeDelta.y);
+            statusRect.sizeDelta = new Vector2(StatusBar.tickSize * total, statusRect.sizeDelta.y);
 
             return amount;
         }
         return -1;
     }
 
-    //returns the amount succesfully removed
-    public int remove(int amount)
+    //remove a specific amount from this condition
+    //returns: how much has been succesfully removed
+    public virtual int remove(int amount)
     {
-        Amount -= amount;
+        total -= amount;
 
-        if (Amount <= 0)
+        if (total <= 0)
         {
-            int rest = -Amount;
-            Amount = 0;
-            StatusVisual.SetActive(false);
+            int rest = -total;
+            total = 0;
+            statusVisual.SetActive(false);
             return amount - rest;
         }
 
         //update condition size
-        statusRect.sizeDelta = new Vector2(StatusBar.tickSize * Amount, statusRect.sizeDelta.y);
+        statusRect.sizeDelta = new Vector2(StatusBar.tickSize * total, statusRect.sizeDelta.y);
         return amount;
     }
 
-    public int Update()
+    //update this condition
+    //returns: total amount changed
+    public virtual int update()
     {
-        if (deterioratingSpeed == 0 || Amount <= 0)
+        if (deterioratingSpeed == 0 || total <= 0)
         {
             return 0;
         }

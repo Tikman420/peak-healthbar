@@ -61,6 +61,7 @@ public class Player
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
+        //Sprinting
         if (Input.GetButtonDown("Sprint"))
         {
             status.isSprinting = true;
@@ -79,13 +80,16 @@ public class Player
         {
             status.isSprinting = false;
         }
-        Vector3 move = playerTransform.right * x + playerTransform.forward * z;
 
+        //Jumping
         if (Input.GetButton("Jump") && isGrounded)
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
             isGrounded = false;
         }
+
+        //apply movement
+        Vector3 move = playerTransform.right * x + playerTransform.forward * z;
 
         velocity.x = move.x * speed;
         velocity.z = move.z * speed;

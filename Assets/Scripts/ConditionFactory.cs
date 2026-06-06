@@ -14,13 +14,13 @@ internal static class ConditionFactory
         newCondition.deterioratingSpeed = condition.deterioratingSpeed;
 
         //visuals
-        newCondition.StatusVisual = GameObject.Instantiate(templateCondition, parent);
+        newCondition.statusVisual = GameObject.Instantiate(templateCondition, parent);
 
-        Image icon = newCondition.StatusVisual.transform.GetChild(0).GetComponent<Image>();
+        Image icon = newCondition.statusVisual.transform.GetChild(0).GetComponent<Image>();
         icon.sprite = condition.icon;
         icon.color = condition.color;
 
-        icon = newCondition.StatusVisual.transform.GetChild(1).GetComponent<Image>();
+        icon = newCondition.statusVisual.transform.GetChild(1).GetComponent<Image>();
         icon.color = condition.color;
 
         //influencers

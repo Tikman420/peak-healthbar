@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
 
@@ -11,7 +10,8 @@ internal class StatusBar
     private const int sprintDepletion = 2;
     private const float hungerTimerLength = 10;
     private const int hungerAmount = 20;
-
+    
+    //other stuff no need to touch
     public List<ICondition> statusconditions = new List<ICondition>();
     public List<ScriptableCondition> statusTypes;
     public bool dead;
@@ -38,6 +38,7 @@ internal class StatusBar
             bar = staminaSlider.transform.parent.GetComponent<HorizontalLayoutGroup>();
         } }
 
+    //update statusbar
     public void update()
     {
         //add hunger
@@ -52,7 +53,7 @@ internal class StatusBar
         //update the conditions
         foreach (ICondition condition in statusconditions)
         {
-            int updatedTotal = condition.Update();
+            int updatedTotal = condition.update();
             if (updatedTotal == 0)
             {
                 continue;
@@ -86,6 +87,8 @@ internal class StatusBar
         bar.SetLayoutHorizontal();
     }
 
+    //add a specific amount to a condition with type
+    //takes: the name of the condition (string) and the total amount that needs to be added (int)
     public void AddAmount(string type, int amount)
     {
         if (amount <= 0)
@@ -95,10 +98,9 @@ internal class StatusBar
 
         foreach (ICondition condition in statusconditions)
         {
-            int addTotal = condition.Add(amount, type);
+            int addTotal = condition.add(amount, type);
             if (addTotal != -1)
             {
-                Debug.Log(addTotal);
                 StaminaSlider.maxValue -= addTotal;
                 return;
             }
@@ -122,14 +124,16 @@ internal class StatusBar
         }
 
         statusconditions.Add(ConditionFactory.AddCondition(result, bar.transform, statusconditions));
-        int remove = statusconditions[^1].Add(amount, type);
+        int remove = statusconditions[^1].add(amount, type);
         if (remove != -1)
         {
-            Debug.Log(remove);
             StaminaSlider.maxValue -= remove;
         }
     }
 
+
+    //add a velocity to a condition of a specific type
+    //takes: the name of the condition (string) and the velocity (Vector3)
     public void AddVelocity(string type, Vector3 velocity)
     {         
         AddAmount(type, Mathf.RoundToInt(Vector3.Distance(Vector3.zero, velocity)*20));

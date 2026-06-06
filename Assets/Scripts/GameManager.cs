@@ -40,11 +40,13 @@ public class GameManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
     }
 
+    //update input
     private void Update()
     {
         player.update(staminaSlider.maxValue <= 0);
     }
 
+    //uodate conditions and state
     private void FixedUpdate()
     {
         //only continue if not in the dead state
@@ -54,6 +56,7 @@ public class GameManager : MonoBehaviour
             return;
         }
 
+        //update state
         status.update();
 
         //check for fall damage
@@ -72,8 +75,6 @@ public class GameManager : MonoBehaviour
                 {
                     continue;
                 }
-
-                Debug.Log(collision.gameObject.tag);
 
                 status.AddVelocity(collision.gameObject.tag, player.previousSpeed);
                 break;
