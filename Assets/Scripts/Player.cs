@@ -4,11 +4,11 @@ public class Player
 {
     //controller settings
     public const float speed = 6f;
-    public const float gravity = -0.1962f;
-    public const float jumpHeight = 100f;
+    public const float gravity = -19.62f;
+    public const float jumpHeight = 1f;
     public const float sprintMultiplier = 1.5f;
 
-    public const float mouseSensitivity = 200f;
+    public const float mouseSensitivity = 800f;
 
     //other stuff, no need to touch
     internal StatusBar status;
@@ -93,7 +93,7 @@ public class Player
 
         velocity.x = move.x * speed;
         velocity.z = move.z * speed;
-        velocity.y += gravity;
+        velocity.y += gravity * Time.deltaTime;
 
         controllerComponent.Move(velocity * Time.deltaTime);
     }
